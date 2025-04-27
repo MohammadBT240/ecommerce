@@ -41,6 +41,27 @@ export const StateContext = ({ children }) => {
     toast.success(`${qty} ${product.name} added to cart!`);
   };
 
+  const onRemove = (product) => {
+    foundProduct = cartItems.find((items) => items._id === product._id);
+    const updatedCartItems = cartItems.map((item) =>
+      item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
+    );
+
+    setTotalPrice(
+      (prevTotalPrice) =>
+        prevTotalPrice - foundProduct.price * foundProduct.quantity
+    );
+    setTotalQuantities(
+      (prevTotalQuantities) => prevTotalQuantities - foundProduct.quantity
+    );
+    setCartItems(
+      cartItems.filter((product) => product._id !== foundProduct._id)
+    );
+    toast.error(
+      `${foundProduct.quantity} ${foundProduct.name} removed from cart!`
+    );
+  };
+
   const toggleCartItemQuantity = (id, value) => {
     foundProduct = cartItems.find((items) => items._id === id);
     index = cartItems.findIndex((product) => product._id === id);
@@ -86,6 +107,10 @@ export const StateContext = ({ children }) => {
         decQty,
         onAdd,
         toggleCartItemQuantity,
+        onRemove,
+        setCartItems,
+        setTotalPrice,
+        setTotalQuantities,
       }}
     >
       {children}

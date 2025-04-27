@@ -12,6 +12,7 @@ import { TiDeleteOutline } from "react-icons/ti";
 import toast from "react-hot-toast";
 import { useStateContext } from "../context/StateContext";
 import { urlFor } from "../lib/client";
+import getStripe from "../lib/getStripe";
 
 const Cart = () => {
   const cartRef = useRef();
@@ -23,7 +24,35 @@ const Cart = () => {
     totalQuantities,
     setShowCart,
     toggleCartItemQuantity,
+    onRemove,
   } = useStateContext();
+
+  const handleCheckout = async () => {
+    if (totalPrice < 750) {
+      toast.error("Total must be at least ₦750 to proceed.");
+      return;
+    }
+    const stripe = await getStripe();
+
+    const response = await fetch("/api/stripe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cartItems }),
+    });
+
+    if (!response.ok) {
+      toast.error("Failed to initiate checkout.");
+      return;
+    }
+
+    try {
+      const data = await response.json();
+      await stripe.redirectToCheckout({ sessionId: data.id });
+    } catch (error) {
+      console.error("Invalid JSON response:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
 
   return (
     <div className="cart-wrapper">
@@ -59,13 +88,17 @@ const Cart = () => {
               <div className="product" key={item._id}>
                 <img
                   className="cart-product-image"
-                  src={urlFor(item?.image[0])}
+                  src={
+                    item?.image && item.image[0]
+                      ? urlFor(item.image[0])
+                      : "/placeholder.png"
+                  }
                   alt={item.name}
                 />
                 <div className="item-desc">
                   <div className="flex top">
                     <h5>{item.name}</h5>
-                    <h4>₦{item.price}</h4>
+                    <h4>₦{item.price}</h4>f
                   </div>
                   <div className="flex bottom">
                     <div>
@@ -89,7 +122,13 @@ const Cart = () => {
                         </span>
                       </p>
                     </div>
-                    <button type="button" className="remove-item">
+                    <button
+                      type="button"
+                      className="remove-item"
+                      onClick={() => {
+                        onRemove(item);
+                      }}
+                    >
                       <TiDeleteOutline />
                     </button>
                   </div>
@@ -104,7 +143,13 @@ const Cart = () => {
               <h3>₦{totalPrice}</h3>
             </div>
             <div className="btn-container">
-              <button type="button" className="btn" onClick={``}>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  return handleCheckout();
+                }}
+              >
                 Pay with Stripe
               </button>
             </div>

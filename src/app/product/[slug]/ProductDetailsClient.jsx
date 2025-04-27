@@ -13,11 +13,15 @@ import { useStateContext } from "../../../../context/StateContext";
 
 const ProductDetailsClient = ({ product, products }) => {
   const { name, details, price, image } = product;
-  const { decQty, incQty, qty, onAdd } = useStateContext();
+  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
 
   // State to track the selected image
   const [selectedImage, setSelectedImage] = useState(image[0]);
 
+  const handleBuyNow = () => {
+    onAdd(product, qty);
+    setShowCart(true);
+  };
   // Fallback for missing images
   if (!image || image.length === 0) {
     return <div>No images available for this product.</div>;
@@ -95,7 +99,7 @@ const ProductDetailsClient = ({ product, products }) => {
             >
               Add to Cart
             </button>
-            <button type="button" className="buy-now">
+            <button type="button" className="buy-now" onClick={handleBuyNow}>
               Buy Now
             </button>
           </div>
