@@ -11,6 +11,7 @@
   "dependencies": {
     "@sanity/client": "^6.27.1",
     "@sanity/image-url": "^1.1.0",
+    "@sanity/vision": "^3.71.2",
     "@stripe/stripe-js": "^1.25.0",
     "canvas-confetti": "^1.5.1",
     "next": "^15.1.6",
@@ -19,12 +20,17 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.2.0",
     "react-icons": "^4.3.1",
+    "sanity": "^3.71.2",
     "stripe": "^8.209.0",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.6"
+    "@sanity/eslint-config-studio": "^5.0.1",
+    "@types/react": "^18.0.25",
+    "eslint": "^9.9.0",
+    "eslint-config-next": "15.1.6",
+    "prettier": "^3.0.2",
+    "typescript": "^5.1.6"
   }
 }
