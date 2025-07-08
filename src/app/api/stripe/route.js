@@ -8,7 +8,7 @@ export async function POST(req) {
     const { cartItems } = await req.json();
 
     // Define fallback origin
-    const origin = req.headers.origin 
+    const origin = req.headers.origin || "http://localhost:3000/"
 
     // Map cart items to Stripe line_items
     const lineItems = cartItems.map((item) => {
